@@ -15,6 +15,7 @@ import Timer from "./Timer";
 const SECS_PER_QUESTION = 30;
 
 const initialSate = {
+  questionsInitial: [],
   questions: [],
 
   // 'loading', 'error', 'ready', 'active', 'finished'
@@ -29,7 +30,12 @@ const initialSate = {
 function reducer(state, action) {
   switch (action.type) {
     case "dataReceived":
-      return { ...state, questions: action.payload, status: "ready" };
+      return {
+        ...state,
+        questionsInitial: action.payload,
+        questions: action.payload,
+        status: "ready",
+      };
     case "dataFailed":
       return { ...state, status: "error" };
     case "start":
@@ -69,7 +75,7 @@ function reducer(state, action) {
       return {
         ...initialSate,
         questions: state.questions,
-        status: "active",
+        status: "ready",
         highscore: state.highscore,
       };
     }
@@ -81,6 +87,16 @@ function reducer(state, action) {
         status: state.secondsRemaining === 0 ? "finished" : state.status,
       };
     }
+    case "difficulty": {
+      const questions = state.questionsInitial.filter(
+        (question) => question.points === Number(action.payload)
+      );
+
+      return {
+        ...state,
+        questions: questions.length === 0 ? state.questionsInitial : questions,
+      };
+    }
     default:
       throw new Error("Action unkown");
   }
@@ -88,7 +104,16 @@ function reducer(state, action) {
 
 export default function App() {
   const [
-    { questions, status, index, answer, points, highscore, secondsRemaining },
+    {
+      questions,
+      status,
+      index,
+      answer,
+      points,
+      highscore,
+      secondsRemaining,
+      questionsForGame,
+    },
     dispatch,
   ] = useReducer(reducer, initialSate);
 
