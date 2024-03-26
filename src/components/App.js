@@ -192,3 +192,5 @@ export default function App() {
     </div>
   );
 }
+
+// Section Summary: useState vs. useReducer
