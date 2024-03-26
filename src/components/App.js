@@ -97,6 +97,14 @@ function reducer(state, action) {
         questions: questions.length === 0 ? state.questionsInitial : questions,
       };
     }
+    case "highScoreRecieved": {
+      const highscore = action.payload.slice(-1)[0].highscore;
+
+      return {
+        ...state,
+        highscore: highscore,
+      };
+    }
     default:
       throw new Error("Action unkown");
   }
@@ -127,6 +135,14 @@ export default function App() {
     fetch("http://localhost:8000/questions")
       .then((res) => res.json())
       .then((data) => dispatch({ type: "dataReceived", payload: data }))
+      .catch((err) => dispatch({ type: "dataFailed" }));
+  }, []);
+
+  // Fetching highschore from fake API
+  useEffect(() => {
+    fetch("http://localhost:9000/highscore")
+      .then((res) => res.json())
+      .then((data) => dispatch({ type: "highScoreRecieved", payload: data }))
       .catch((err) => dispatch({ type: "dataFailed" }));
   }, []);
 

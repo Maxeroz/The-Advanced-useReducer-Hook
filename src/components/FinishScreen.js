@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+
 function FinishScreen({ points, maxPossiblePoints, highscore, dispatch }) {
   const percentage = (points / maxPossiblePoints) * 100;
 
@@ -8,6 +10,16 @@ function FinishScreen({ points, maxPossiblePoints, highscore, dispatch }) {
   if (percentage >= 50 && percentage < 80) emoji = "";
   if (percentage >= 0 && percentage < 50) emoji = "";
   if (percentage === 0) emoji = "🤦‍♂️";
+
+  useEffect(() => {
+    fetch("http://localhost:9000/highscore", {
+      method: "POST",
+      body: JSON.stringify({ highscore: highscore }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }).then((res) => res.json());
+  }, []);
 
   return (
     <>
